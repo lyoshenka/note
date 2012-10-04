@@ -1,0 +1,16 @@
+(function() { 
+  var xmlhttp = new XMLHttpRequest(); 
+  xmlhttp.onreadystatechange = function() {
+    var data = JSON.parse(xmlhttp.responseText);
+    if (xmlhttp.readyState === 4) {
+      if (data.ok) {
+        alert('Noted');
+      }
+      else {
+        alert('Error: ' + data.error);
+      }
+    }
+  };
+  xmlhttp.open('GET', '//note.grin.io/note/KEY/' + base64.encode(window.location.href), true); 
+  xmlhttp.send(); 
+})();
