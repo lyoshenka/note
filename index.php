@@ -76,7 +76,6 @@ $app->post('/new', function() use($app) {
   {
     $confirmUrl = 'http://note.grin.io' . $app['url_generator']->generate('confirm', array('hash' => $user['hash'])); // fake absolute url so we don't get a port number in there
     $app['mailer']->send(
-      array('Note Setup', 'note'),
       $email,
       'Confirm Your Email Address',
       'Confirm your email address by clicking here: ' . $confirmUrl,
@@ -135,7 +134,6 @@ $app->get('/note/{hash}/{url}', function ($hash, $url) use ($app) {
   }
 
   $app['mailer']->send(
-    array('Note', 'note'),
     $user['email'],
     '{note} ' . $url,
     'source: $url' . "\n" . date('F j, Y, g:i a'),

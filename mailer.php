@@ -10,29 +10,10 @@ class Mailer
     $this->mailgunKey = $mailgunKey;
   }
 
-  public function send($from, $to, $subject, $bodyText, $bodyHtml)
+  public function send($to, $subject, $bodyText, $bodyHtml)
   {
-    if (is_array($from))
-    {
-      $key = key($from);
-      $val = reset($from);
-
-      if (is_numeric($key))
-      {
-        $from = $val . '@' . $this->mailgunDomain;
-      }
-      else
-      {
-        $from = $key . ' <' . $val . '@' . $this->mailgunDomain . '>';
-      }
-    }
-    else
-    {
-      $from .= '@' . $this->mailgunDomain;
-    }
-
     $fields = array(
-      'from' => $from,
+      'from' => 'Note <note@' . $this->mailgunDomain . '>',
       'to' => $to,
       'subject' => $subject,
       'text' => $bodyText,
