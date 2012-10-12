@@ -31,9 +31,8 @@ $app->register(new Silex\Provider\TwigServiceProvider(), array(
 ));
 $app->register(new Silex\Provider\UrlGeneratorServiceProvider());
 
-include 'config.php';
 include 'mailer.php';
-$app['mailer'] = new Mailer($mailgunKey, $mailgunDomain);
+$app['mailer'] = new Mailer(getenv('MAILGUN_API_KEY'), getenv('MAILGUN_DOMAIN'));
 
 $app['mongo'] = function() {
     $services_json = json_decode(getenv("VCAP_SERVICES"),true);
