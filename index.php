@@ -53,10 +53,10 @@ $app->get('/reset', function() use($app) {
   return 'OK';
 });
 
-$app->get('/new', function() use($app) {
+$app->get('/', function() use($app) {
   return $app['twig']->render('new.twig.html');
 });
-$app->post('/new', function() use($app) {
+$app->post('/', function() use($app) {
   $email = $app['request']->get('email');
 
   $user = $app['mongo']->findOne(array('email' => $email));
