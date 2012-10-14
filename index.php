@@ -4,20 +4,12 @@ require_once __DIR__.'/vendor/autoload.php';
 
 use Symfony\Component\HttpFoundation\Response;
 
-function base64_url_encode($input) {
- return strtr(base64_encode($input), '+/=', '-_,');
-}
-
 function base64_url_decode($input) {
  return base64_decode(strtr($input, '-_,', '+/='));
 }
 
 function idToHash($id) {
   return gmp_strval(gmp_init($id, 16), 62);
-}
-
-function hashToId($hash) {
-  return gmp_strval(gmp_init($hash, 62), 16);
 }
 
 $app = new Silex\Application();
@@ -102,25 +94,24 @@ $app->get('/confirm/{hash}', function($hash) use ($app) {
 })->bind('confirm');
 
 
-$app->get('/bookmarklet/{hash}', function($hash) {
-  return '<html><body>Drag this to your bookmark bar: <a href="javascript:(function(){s=document.createElement(\'script\');s.src=\'//note.grin.io/note.js?k=' . $hash . 
-         '&r=\'+Math.random();document.body.appendChild(s);})();">Note</a></body></html>';
+$app->get('/bookmarklet/{hash}', function($hash) use($app) {
+  return $app['twig']->render('bookmarklet.twig.html', array('hash' => $hash));
 })->bind('bookmarklet');
 
 
-$app->get('/note.js', function() use ($app) {
-  return file_get_contents('base_64_url.min.js') . str_replace('KEY', $app['request']->get('k'), file_get_contents('note.js.incomplete'));
-});
-
-
 $app->get('/note/{hash}/{url}', function ($hash, $url) use ($app) {
-
-  $url = base64_url_decode($url);
 
   $response = new Response('', 200, array(
     'Content-Type' => 'application/json',
     'Access-Control-Allow-Origin' => '*'
   ));
+
+  if ($hash === '0')
+  {
+    return $response->setContent(json_encode(array('ok' => 0, 'error' => 'User id not set in Javascript')));
+  }
+
+  $url = base64_url_decode($url);
 
   $user = $app['mongo']->findOne(array('hash' => $hash));
   if (!$user)
