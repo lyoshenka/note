@@ -40,10 +40,10 @@ $app['mongo'] = function() {
     return $m->selectCollection($db,'users');
 };
 
-$app->get('/reset', function() use($app) {
-  $app['mongo']->drop();
-  return 'OK';
-});
+//$app->get('/reset', function() use($app) {
+//  $app['mongo']->drop();
+//  return 'OK';
+//});
 
 $app->get('/', function() use($app) {
   return $app['twig']->render('new.twig.html');
@@ -63,22 +63,15 @@ $app->post('/', function() use($app) {
     $app['mongo']->update(array('_id' => new MongoId($user['_id']->{'$id'})), $user);
   }
 
-  if (!$user['confirmed'])
-  {
-    $confirmUrl = 'http://note.grin.io' . $app['url_generator']->generate('confirm', array('hash' => $user['hash'])); // fake absolute url so we don't get a port number in there
-    $app['mailer']->send(
-      $email,
-      'Confirm Your Email Address',
-      'Confirm your email address by clicking here: ' . $confirmUrl,
-      '<html><body>Confirm your email address by clicking here: <a href="' . $confirmUrl . '">' . $confirmUrl . '</a></body></html>'
-    );
- 
-    return 'We sent you an email to confirm your email address. Click the link in that email to continue.';
-  }
-  else
-  {
-    return $app->redirect($app['url_generator']->generate('bookmarklet', array('hash' => $user['hash'])));
-  }
+  $confirmUrl = 'http://note.grin.io' . $app['url_generator']->generate('confirm', array('hash' => $user['hash'])); // fake absolute url so we don't get a port number in there
+  $app['mailer']->send(
+    $email,
+    'Confirm Your Email Address',
+    'Confirm your email address by clicking here: ' . $confirmUrl,
+    '<html><body>Confirm your email address by clicking here: <a href="' . $confirmUrl . '">' . $confirmUrl . '</a></body></html>'
+  );
+
+  return 'We sent you an email to confirm your email address. Click the link in that email to continue.';
 });
 
 
@@ -99,7 +92,7 @@ $app->get('/bookmarklet/{hash}', function($hash) use($app) {
 })->bind('bookmarklet');
 
 
-$app->get('/note/{hash}/{url}', function ($hash, $url) use ($app) {
+$app->get('/note/{hash}', function ($hash) use ($app) {
 
   $response = new Response('', 200, array(
     'Content-Type' => 'application/json',
@@ -111,8 +104,6 @@ $app->get('/note/{hash}/{url}', function ($hash, $url) use ($app) {
     return $response->setContent(json_encode(array('ok' => 0, 'error' => 'User id not set in Javascript')));
   }
 
-  $url = base64_url_decode($url);
-
   $user = $app['mongo']->findOne(array('hash' => $hash));
   if (!$user)
   {
@@ -123,15 +114,19 @@ $app->get('/note/{hash}/{url}', function ($hash, $url) use ($app) {
     return $response->setContent(json_encode(array('ok' => 0, 'error' => 'Email address not confirmed.')));
   }
 
+  $url = base64_url_decode($app['request']->get('u'));
+  $title = base64_url_decode($app['request']->get('t'));
+  $selection = base64_url_decode($app['request']->get('s'));
+
   $app['mailer']->send(
     $user['email'],
     '{note} ' . $url,
-    'source: $url' . "\n" . date('F j, Y, g:i a'),
-    '<html><body>source: <a href="' . $url . '">' . $url . '</a><br/>' . date('F j, Y, g:i a') . '</body></html>'
+    "source: $url\ntitle: $title\n" . date('F j, Y, g:i a') . "\n\n$selection",
+    '<html><body>source: <a href="' . $url . '">' . $url . '</a><br/>title: <b>' . $title . '</b><br/>' . date('F j, Y, g:i a') . '<br/><br/>' . $selection . '</body></html>'
   );
 
   return $response->setContent(json_encode(array('ok' => 1)));
-})->assert('url', '.+');
+});
 
 
 $app->run();
