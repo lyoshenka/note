@@ -12,6 +12,10 @@ function idToHash($id) {
   return gmp_strval(gmp_init($id, 16), 62);
 }
 
+function myHTMLEntities($str) {
+  return htmlentities($str, ENT_QUOTES|ENT_IGNORE, 'UTF-8');
+}
+
 $app = new Silex\Application();
 
 $app['debug'] = true;
@@ -122,7 +126,7 @@ $app->get('/note/{hash}', function ($hash) use ($app) {
     $user['email'],
     '{note} ' . $url,
     "source: $url\ntitle: $title\n" . date('F j, Y, g:i a') . "\n\n$selection",
-    '<html><body>source: <a href="' . $url . '">' . $url . '</a><br/>title: <b>' . htmlentities($title) . '</b><br/>' . date('F j, Y, g:i a') . '<br/><br/>' . $selection . '</body></html>'
+    '<html><body>source: <a href="' . $url . '">' . $url . '</a><br/>title: <b>' . myHTMLEntities($title) . '</b><br/>' . date('F j, Y, g:i a') . '<br/><br/>' . myHTMLEntities($selection) . '</body></html>'
   );
 
   return $response->setContent(json_encode(array('ok' => 1)));
