@@ -4,7 +4,7 @@ require_once __DIR__.'/vendor/autoload.php';
 
 use Symfony\Component\HttpFoundation\Response;
 
-function base64_url_decode($input) {
+function base64UrlDecode($input) {
  return base64_decode(strtr($input, '-_,', '+/='));
 }
 
@@ -18,17 +18,38 @@ function myHTMLEntities($str) {
 
 $app = new Silex\Application();
 
-$app['debug'] = true;
-ini_set('error_reporting', E_ALL);
-ini_set('display_errors', true);
+//$app['debug'] = true;
+//ini_set('error_reporting', E_ALL);
+//ini_set('display_errors', true);
 
 $app->register(new Silex\Provider\TwigServiceProvider(), array(
   'twig.path' => __DIR__.'/views',
 ));
 $app->register(new Silex\Provider\UrlGeneratorServiceProvider());
 
-include 'mailer.php';
-$app['mailer'] = new Mailer(getenv('MAILGUN_API_KEY'), getenv('MAILGUN_DOMAIN'));
+
+$app['send'] = $app->protect(function($to, $subject, $bodyText, $bodyHtml) {
+  $apiKey = getenv('MAILGUN_API_KEY');
+  $domain = getenv('MAILGUN_DOMAIN');
+  $ch = curl_init();
+  curl_setopt_array($ch,array(
+    CURLOPT_URL            => 'https://api.mailgun.net/v2/' . $domain . '/messages',
+    CURLOPT_POST           => true,
+    CURLOPT_POSTFIELDS     => http_build_query(array(
+      'from' => 'Note <note@' . $domain . '>',
+      'to' => $to,
+      'subject' => $subject,
+      'text' => $bodyText,
+      'html' => $bodyHtml
+    )),
+    CURLOPT_USERPWD        => 'api:' . $apiKey,
+    CURLOPT_RETURNTRANSFER => true
+  ));
+  $result = curl_exec($ch);
+  curl_close($ch);
+  return $result;
+});
+
 
 $app['mongo'] = function() {
     $services_json = json_decode(getenv("VCAP_SERVICES"),true);
@@ -68,12 +89,12 @@ $app->post('/', function() use($app) {
   }
 
   $confirmUrl = 'http://note.grin.io' . $app['url_generator']->generate('confirm', array('hash' => $user['hash'])); // fake absolute url so we don't get a port number in there
-  $app['mailer']->send(
+  call_user_func_array($app['send'], array(
     $email,
     'Confirm Your Email Address',
     'Confirm your email address by clicking here: ' . $confirmUrl,
     '<html><body>Confirm your email address by clicking here: <a href="' . $confirmUrl . '">' . $confirmUrl . '</a></body></html>'
-  );
+  ));
 
   return 'We sent you an email to confirm your email address. Click the link in that email to continue.';
 });
@@ -118,16 +139,16 @@ $app->get('/note/{hash}', function ($hash) use ($app) {
     return $response->setContent(json_encode(array('ok' => 0, 'error' => 'Email address not confirmed.')));
   }
 
-  $url = base64_url_decode($app['request']->get('u'));
-  $title = base64_url_decode($app['request']->get('t'));
-  $selection = base64_url_decode($app['request']->get('s'));
+  $url = base64UrlDecode($app['request']->get('u'));
+  $title = base64UrlDecode($app['request']->get('t'));
+  $selection = base64UrlDecode($app['request']->get('s'));
 
-  $app['mailer']->send(
+  call_user_func_array($app['send'], array(
     $user['email'],
     '{note} ' . $url,
     "source: $url\ntitle: $title\n" . date('F j, Y, g:i a') . "\n\n$selection",
     '<html><body>source: <a href="' . $url . '">' . $url . '</a><br/>title: <b>' . myHTMLEntities($title) . '</b><br/>' . date('F j, Y, g:i a') . '<br/><br/>' . myHTMLEntities($selection) . '</body></html>'
-  );
+  ));
 
   return $response->setContent(json_encode(array('ok' => 1)));
 });
