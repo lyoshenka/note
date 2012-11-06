@@ -1,5 +1,6 @@
 (function() {
 
+// http://stringencoders.googlecode.com/svn-history/r210/trunk/javascript/base64.js
   bas64encode = function(a){a=""+a;if(0===a.length)return a;var z="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_",e=function(a,b){var c=a.charCodeAt(b);if(255<c)throw"INVALID_CHARACTER_ERR: DOM Exception 5";return c;},c,b,d=[],f=a.length-a.length%3;for(c=0;c<f;c+=3)b=e(a,c)<<16|e(a,c+1)<<8|e(a,c+2),d.push(z.charAt(b>>18)),d.push(z.charAt(b>>12&63)),d.push(z.charAt(b>>6&63)),d.push(z.charAt(b&63));
                 switch(a.length-f){case 1:b=e(a,c)<<16;d.push(z.charAt(b>>18)+z.charAt(b>>12&63));break;case 2:b=e(a,c)<<16|e(a,c+1)<<8,d.push(z.charAt(b>>18)+z.charAt(b>>12&63)+z.charAt(b>>6&63));}return d.join("");};
 
