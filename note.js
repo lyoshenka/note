@@ -26,7 +26,7 @@
           el = document.createElement("div"),
           b = document.getElementsByTagName("body")[0],
           txt = document.createTextNode(data.ok ? 'Noted.' : 'Error: ' + data.error);
-      el.style.cssText='position:fixed;height:32px;width:100%;text-align:center;top:0;left:0;padding:15px;z-index=999999;font-size:32px;color:#222;background-color:#f99';
+      el.style.cssText='position:fixed;height:32px;width:100%;text-align:center;top:0;left:0;padding:15px;z-index=2147483647;font-size:32px;color:#222;background-color:#f99';
       el.appendChild(txt);
       b.appendChild(el);
       window.setTimeout(function () { txt = null, b.removeChild(el); }, data.ok ? 1000 : 3000);
