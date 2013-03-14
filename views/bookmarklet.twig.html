@@ -1,12 +1,19 @@
 <html>
-<head></head>
+{% include 'head.twig.html' %}
 <body>
-<p>
-Drag this to your bookmark bar: 
-<a href="javascript:(function(){window._note_bookmarklet_user_id='{{ hash }}';s=document.createElement('script');s.src='//note.grin.io/note.min.js?r='+Math.random();document.body.appendChild(s);})();">Note</a>
-</p>
-<p>
-Click it to email yourself a link to the page you're on, along with the page title and timestamp. If you highlight any text, that goes in the email too.
-</p>
+    <div class="container">
+        <p class="instructions">
+            Drag this to your bookmark bar:
+        </p>
+        <a class='button' href="javascript:(function(){window._note_bookmarklet_user_id='{{ hash }}';s=document.createElement('script');s.src='//note.grin.io/note.min.js?r='+Math.random();document.body.appendChild(s);})();">Note</a>
+        <p class="instructions">
+            Click the bookmark to email yourself a link to the page you're on.
+            <br/>
+            You'll also get the page title and timestamp.
+            <br/>
+            If you highlight any text, that goes in the email too.
+        </p>
+    </div>
+    {% include 'scripts.twig.html' %}
 </body>
 </html>

@@ -1,0 +1,66 @@
+/* http://www.colourlovers.com/palette/2745169/Sunshine_Spring */
+body
+{
+    background-color: #00E1C7;
+    font-family: 'Droid Serif', serif;
+}
+
+div.container
+{
+    margin: 10% auto 0;
+    text-align: center;
+}
+
+#headline
+{
+    margin-bottom: 2rem;
+    color: #222222;
+    font-size: 96px;
+    font-size: 7vw;
+}
+
+#email_box
+{
+    width: 30%;
+    width: 30vw;
+    margin-bottom: 24px;
+    margin-bottom: 1.75vw;
+    height: 48px;
+    height: 3.5vw;
+    padding: 15px 10px;
+    padding: 1.1vw 0.75vw;
+    font-size: 24px;
+    font-size: 1.75vw;
+    border: 0;
+}
+
+.button
+{
+    webkit-border-radius: 25px;
+    -moz-border-radius: 25px;
+    border-radius: 25px;
+    font-size: 27px;
+    font-size: 2vw;
+    border: 5px #175E78 solid;
+    padding: 10px 15px;
+    padding: 0.75vw 1.1vw;
+    cursor: pointer;
+    background-color: #ddd;
+}
+
+a.button
+{
+    text-decoration: none;
+    color: inherit;
+}
+
+p.instructions
+{
+    display: block;
+    margin: 40px 0;
+    margin: 3vw;
+    font-size: 24px;
+    font-size: 1.75vw;
+    line-height: 37.5px;
+    line-height: 2.75vw;
+}

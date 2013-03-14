@@ -1,14 +1,18 @@
 <html>
+{% include 'head.twig.html' %}
 <body>
+    <div class="container">
+        <h1 id="headline">New Note</h1>
 
-<h1>New</h1>
+        <form action="/" method="POST">
 
-<form action="/" method="POST">
+        <input id="email_box" type="text" name="email" placeholder="your@email.com"></input>
 
-<input type="text" name="email"></input>
+        <br/>
 
-<button type="submit">Get Bookmarklet</button>
-</form>
-
+        <button type="submit" class="button">Get Bookmarklet</button>
+        </form>
+    </div>
+    {% include 'scripts.twig.html' %}
 </body>
 </html>
