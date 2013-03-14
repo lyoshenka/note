@@ -1,6 +1,6 @@
 <script type="text/javascript">
     // vw units dont change size when viewport changes, so force repaint
-    causeRepaintsOn = $("h1, p, a, input, button");
+    causeRepaintsOn = $("h1, p, a, input, button, div");
     $(window).resize(function() {
         causeRepaintsOn.css("z-index", 1);
     });

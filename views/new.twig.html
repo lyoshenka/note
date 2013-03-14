@@ -4,14 +4,27 @@
     <div class="container">
         <h1 id="headline">New Note</h1>
 
-        <form action="/" method="POST">
-
-        <input id="email_box" type="text" name="email" placeholder="your@email.com"></input>
-
-        <br/>
-
-        <button type="submit" class="button">Get Bookmarklet</button>
-        </form>
+        {% if post %}
+            <p class="instructions">
+                We sent you an email to confirm your email address. Click the link in that email to continue.
+                <br/>
+                You may close this window.
+            </p>
+        {% else %}
+            <form action="/" method="POST">
+                {% if no_email %}
+                    <div class="error">Enter your email address</div>
+                {% endif %}
+                {% if invalid_email %}
+                    <div class="error">Invalid email address</div>
+                {% endif %}
+                <input id="email_box" type="text" name="email" placeholder="your@email.com"
+                    {% if email %} value={{ email }} {% endif %}
+                 />
+                <br/>
+                <button type="submit" class="button">Get Bookmarklet</button>
+            </form>
+        {% endif %}
     </div>
     {% include 'scripts.twig.html' %}
 </body>

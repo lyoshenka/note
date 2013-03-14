@@ -74,7 +74,15 @@ $app->get('/', function() use($app) {
   return $app['twig']->render('new.twig.html');
 });
 $app->post('/', function() use($app) {
-  $email = $app['request']->get('email');
+  $email = trim($app['request']->get('email'));
+
+  if (!$email)
+  {
+    return $app['twig']->render('new.twig.html', array('no_email' => true));
+  }
+  elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    return $app['twig']->render('new.twig.html', array('invalid_email' => true, 'email' => $email));
+  }
 
   $user = $app['mongo']->findOne(array('email' => $email));
   if (!$user)
@@ -96,7 +104,7 @@ $app->post('/', function() use($app) {
     '<html><body>Confirm your email address by clicking here: <a href="' . $confirmUrl . '">' . $confirmUrl . '</a></body></html>'
   ));
 
-  return 'We sent you an email to confirm your email address. Click the link in that email to continue.';
+  return $app['twig']->render('new.twig.html', array('post' => true));
 });
 
 
