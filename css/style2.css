@@ -8,10 +8,11 @@ body
 
 div.container
 {
-    margin: 10% auto 0;
-    margin: 15vh auto 0;
+    margin: 2% auto 0;
     text-align: center;
 }
+@media all and (min-height: 400px) { div.container { margin: 6% auto 0; } }
+@media all and (min-height: 600px) { div.container { margin: 10% auto 0; } }
 
 #headline
 {
@@ -23,18 +24,34 @@ div.container
 
 #email_box
 {
-    width: 30%;
-    width: 30vw;
+    width: 80%;
     margin-bottom: 24px;
     margin-bottom: 1.75vw;
     height: 48px;
     height: 3.5vw;
     padding: 15px 10px;
     padding: 1.1vw 0.75vw;
-    font-size: 24px;
-    font-size: 1.75vw;
+    font-size: 20px;
+    font-size: 1vw;
     border: 0;
 }
+@media all and (min-width: 200px) { #email_box { width: 70%; } }
+@media all and (min-width: 400px) {
+  #email_box {
+    width: 50%;
+    font-size: 22px;
+    font-size: 1.25vw;
+  }
+}
+@media all and (min-width: 700px) {
+  #email_box {
+    width: 30%;
+    font-size: 24px;
+    font-size: 1.75vw;
+  }
+}
+
+
 
 .button
 {
@@ -74,4 +91,13 @@ p.instructions
     margin-bottom: 1.75vmin;
     font-size: 24px;
     font-size: 1.75vw;
+}
+
+div.about
+{
+  margin-top: 30px;
+}
+div.about a, div.about a:visited, div.about a:hover
+{
+  color: #686B6B;
 }
