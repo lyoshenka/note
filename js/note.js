@@ -24,12 +24,13 @@
     if (xmlhttp.readyState === 4) {
       var data = JSON.parse(xmlhttp.responseText),
           el = document.createElement("div"),
-          b = document.getElementsByTagName("body")[0],
+          body = document.getElementsByTagName("body")[0],
           txt = document.createTextNode(data.ok ? 'Noted.' : 'Error: ' + data.error);
-      el.style.cssText='position:fixed;height:32px;width:100%;text-align:center;top:0;left:0;padding:15px;z-index=2147483647;font-size:32px;color:#222;background-color:#f99';
+      el.style.cssText='position:fixed;height:32px;width:100%;text-align:center;top:0;left:0;padding:15px;font-size:32px;color:#222;background-color:#f99';
+      el.style.zIndex = 2147483647; // this has to be separate. not sure why
       el.appendChild(txt);
-      b.appendChild(el);
-      window.setTimeout(function () { txt = null, b.removeChild(el); }, data.ok ? 1000 : 3000);
+      body.appendChild(el);
+      window.setTimeout(function () { body.removeChild(el); }, data.ok ? 1000 : 3000);
       window._note_bookmarklet_user_id = null;
     }
   };
