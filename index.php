@@ -59,7 +59,6 @@ $app['mongo'] = function() {
     $hostname = $mongo_config["hostname"];
     $port = $mongo_config["port"];
     $db = $mongo_config["db"];
-    $name = $mongo_config["name"];
     $connect = "mongodb://${username}:${password}@${hostname}:${port}/${db}";
     $m = new Mongo($connect);
     return $m->selectCollection($db,'users');
