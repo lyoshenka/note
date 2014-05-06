@@ -8,10 +8,6 @@ function base64UrlDecode($input) {
  return base64_decode(strtr($input, '-_,', '+/='));
 }
 
-function idToHash($id) {
-  return gmp_strval(gmp_init($id, 16), 62);
-}
-
 function myHTMLEntities($str) {
   return htmlentities($str, ENT_QUOTES|ENT_IGNORE, 'UTF-8');
 }
@@ -24,6 +20,9 @@ $app = new Silex\Application();
 
 $app->register(new Silex\Provider\TwigServiceProvider(), array(
   'twig.path' => __DIR__.'/views',
+  'twig.options' => array(
+    'strict_variables' => false
+  )
 ));
 $app->register(new Silex\Provider\UrlGeneratorServiceProvider());
 
@@ -52,16 +51,10 @@ $app['send'] = $app->protect(function($to, $subject, $bodyText, $bodyHtml) {
 
 
 $app['mongo'] = function() {
-    $services_json = json_decode(getenv("VCAP_SERVICES"),true);
-    $mongo_config = $services_json["mongodb-1.8"][0]["credentials"];
-    $username = $mongo_config["username"];
-    $password = $mongo_config["password"];
-    $hostname = $mongo_config["hostname"];
-    $port = $mongo_config["port"];
-    $db = $mongo_config["db"];
-    $connect = "mongodb://${username}:${password}@${hostname}:${port}/${db}";
-    $m = new Mongo($connect);
-    return $m->selectCollection($db,'users');
+  $connect = getenv('MONGOHQ_URL');
+  $m = new MongoClient($connect);
+  $db = substr($connect, strrpos($connect,'/')+1);
+  return $m->selectCollection($db,'users');
 };
 
 //$app->get('/reset', function() use($app) {
@@ -91,7 +84,7 @@ $app->post('/', function() use($app) {
       'confirmed' => false,
     );
     $app['mongo']->insert($user);
-    $user['hash'] = idToHash($user['_id']->{'$id'});
+    $user['hash'] = sha1($email.uniqid());
     $app['mongo']->update(array('_id' => new MongoId($user['_id']->{'$id'})), $user);
   }
 

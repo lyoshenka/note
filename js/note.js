@@ -34,7 +34,7 @@
       window._note_bookmarklet_user_id = null;
     }
   };
-  xmlhttp.open('GET', '//note.hp.af.cm/note/' + key +
+  xmlhttp.open('GET', '//grinnote.herokuapp.com/note/' + key +
                       '?u=' + encode(window.location.href) +
                       '&t=' + encode(window.document.title) +
                       '&s=' + encode(selection),
